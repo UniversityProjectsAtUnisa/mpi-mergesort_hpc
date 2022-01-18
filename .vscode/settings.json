@@ -1,52 +1,54 @@
 {
-    "files.associations": {
-        "*.h": "c",
-        "array": "c",
-        "deque": "c",
-        "string": "c",
-        "unordered_map": "c",
-        "vector": "c",
-        "string_view": "c",
-        "initializer_list": "c",
-        "cstdlib": "c"
-    },
-    "python.formatting.provider": "autopep8",
-    "python.formatting.autopep8Args": [
-        "--max-line-length",
-        "120",
-        "--experimental"
-    ],
-    "C_Cpp.clang_format_style": "Google",
-    "psi-header.templates": [
-        {
-            "language": "*",
-            "template": [
-                "Course: High Performance Computing 2021/2022",
-                "",
-                "Lecturer: Francesco Moscato    fmoscato@unisa.it",
-                "",
-                "Group: ",
-                "De Stefano Alessandro   0622701470  a.destefano56@studenti.unisa.it",
-                "Della Rocca Marco   0622701573  m.dellarocca22@studenti.unisa.it",
-                "",
-                "MPI implementation of mergesort algorithm ",
-                "Copyright (C) 2022 Alessandro De Stefano (EarendilTiwele) Marco Della Rocca (marco741)",
-                "",
-                "This file is part of OMP Mergesort implementation.",
-                "",
-                "MPI Mergesort implementation is free software: you can redistribute it and/or modify",
-                "it under the terms of the GNU General Public License as published by",
-                "the Free Software Foundation, either version 3 of the License, or",
-                "(at your option) any later version.",
-                "",
-                "MPI Mergesort implementation is distributed in the hope that it will be useful,",
-                "but WITHOUT ANY WARRANTY; without even the implied warranty of",
-                "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
-                "GNU General Public License for more details.",
-                "",
-                "You should have received a copy of the GNU General Public License",
-                "along with MPI Mergesort implementation.  If not, see <http://www.gnu.org/licenses/>.",
-            ]
-        }
-    ]
+  "files.associations": {
+    "*.h": "c",
+    "array": "c",
+    "deque": "c",
+    "string": "c",
+    "unordered_map": "c",
+    "vector": "c",
+    "string_view": "c",
+    "initializer_list": "c",
+    "cstdlib": "c",
+    "cstring": "c"
+  },
+  "python.formatting.provider": "autopep8",
+  "python.formatting.autopep8Args": [
+    "--max-line-length",
+    "120",
+    "--experimental"
+  ],
+  "editor.tabSize": 2,
+  "C_Cpp.clang_format_style": "Google",
+  "psi-header.templates": [
+    {
+      "language": "*",
+      "template": [
+        "Course: High Performance Computing 2021/2022",
+        "",
+        "Lecturer: Francesco Moscato    fmoscato@unisa.it",
+        "",
+        "Group: ",
+        "De Stefano Alessandro   0622701470  a.destefano56@studenti.unisa.it",
+        "Della Rocca Marco   0622701573  m.dellarocca22@studenti.unisa.it",
+        "",
+        "MPI implementation of mergesort algorithm ",
+        "Copyright (C) 2022 Alessandro De Stefano (EarendilTiwele) Marco Della Rocca (marco741)",
+        "",
+        "This file is part of OMP Mergesort implementation.",
+        "",
+        "MPI Mergesort implementation is free software: you can redistribute it and/or modify",
+        "it under the terms of the GNU General Public License as published by",
+        "the Free Software Foundation, either version 3 of the License, or",
+        "(at your option) any later version.",
+        "",
+        "MPI Mergesort implementation is distributed in the hope that it will be useful,",
+        "but WITHOUT ANY WARRANTY; without even the implied warranty of",
+        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
+        "GNU General Public License for more details.",
+        "",
+        "You should have received a copy of the GNU General Public License",
+        "along with MPI Mergesort implementation.  If not, see <http://www.gnu.org/licenses/>.",
+      ]
+    }
+  ]
 }
