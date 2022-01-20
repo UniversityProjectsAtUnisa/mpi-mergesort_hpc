@@ -26,20 +26,51 @@
 # along with MPI Mergesort implementation.  If not, see
 # <http://www.gnu.org/licenses/>.
 
+# release is default, for debugging : make BUILD=debug
+BUILD := release
+flags.debug = -g -Wall
+flags.release = -w
+
+# parallel is default, for serial : make EXECUTION=serial
+O := 0
+FILENAME := input/in.txt
+N := 10000
+MAX := 2147483647
+MIN := -$(MAX)
+
+# Wildcard to commands recipe
+space := #
+space +=
+semicolon := ;
 
 IDIR = include
 SRCDIR = src
 BUILDDIR = build
+TESTDIR = test
 EXECUTABLE = main.out
 
 CC = mpicc
 RUN = mpirun
-CFLAGS = -w -I$(IDIR)
+CFLAGS = ${flags.${BUILD}} -I$(IDIR)
 LDFLAGS = -lm
 
+TESTS = $(wildcard $(TESTDIR)/*.c)
+TEST_OBJECTS = $(patsubst $(TESTDIR)/%.c,$(TESTDIR)/$(BUILDDIR)/%.o,$(TESTS))
+TEST_EXECUTABLES = $(patsubst %.o,%.out,$(TEST_OBJECTS))
 SOURCES = $(wildcard $(SRCDIR)/*.c)
 OBJECTS = $(patsubst $(SRCDIR)/%.c,$(BUILDDIR)/%.o,$(SOURCES))
 DEPS = $(wildcard $(IDIR)/*.h)
+
+.PHONY: all
+all: dir $(BUILDDIR)/$(EXECUTABLE) $(TEST_EXECUTABLES)
+
+.PHONY: dir
+dir:
+	mkdir -p $(BUILDDIR)
+
+.PHONY: test_dir
+test_dir:
+	mkdir -p $(TESTDIR)/$(BUILDDIR)
 
 $(BUILDDIR)/$(EXECUTABLE): $(OBJECTS)
 	$(CC) $^ -o $@ $(LDFLAGS)
@@ -47,6 +78,30 @@ $(BUILDDIR)/$(EXECUTABLE): $(OBJECTS)
 $(OBJECTS): $(BUILDDIR)/%.o: $(SRCDIR)/%.c $(DEPS) $(MAKEFILE_LIST)
 	$(CC) -c $< -o $@ $(CFLAGS)
 
+.PHONY: clean
+clean:
+	rm -f $(BUILDDIR)/*.o $(BUILDDIR)/$(EXECUTABLE) $(TESTDIR)/$(BUILDDIR)/*.o $(TESTDIR)/$(BUILDDIR)/*.out
+
 .PHONY: run
 run: $(BUILDDIR)/$(EXECUTABLE)
-	$(RUN) --oversubscribe -np 16 $(BUILDDIR)/$(EXECUTABLE) 
+	$(RUN) --oversubscribe -np 8 $(BUILDDIR)/$(EXECUTABLE)
+
+# Run all tests
+.PHONY: test
+test: test_dir dir $(TEST_EXECUTABLES)
+	$(RUN) $(subst $(space),$(semicolon),$(TEST_EXECUTABLES)) 
+
+$(TEST_EXECUTABLES): $(TESTDIR)/$(BUILDDIR)/%.out: $(TESTDIR)/$(BUILDDIR)/%.o $(BUILDDIR)/%.o
+	$(CC) $^ -o $@ $(LDFLAGS)
+
+$(TESTDIR)/$(BUILDDIR)/%.o: $(TESTDIR)/%.c $(MAKEFILE_LIST)
+	$(CC) -c -O2 $< -o $@ $(CFLAGS)
+
+.PHONY: generate_file
+generate_file: scripts/generate_file.py $(MAKEFILE_LIST)
+	python3 -m venv venv
+	( \
+       . venv/bin/activate; \
+       pip install -r $(PIP_REQUIREMENTS); \
+		$(PYTHON) scripts/generate_file.py $(N) --min $(MIN) --max $(MAX) --input $(FILENAME); \
+    )
