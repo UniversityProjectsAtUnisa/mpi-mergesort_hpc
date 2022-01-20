@@ -35,17 +35,18 @@ EXECUTABLE = main.out
 CC = mpicc
 RUN = mpirun
 CFLAGS = -w -I$(IDIR)
+LDFLAGS = -lm
 
 SOURCES = $(wildcard $(SRCDIR)/*.c)
 OBJECTS = $(patsubst $(SRCDIR)/%.c,$(BUILDDIR)/%.o,$(SOURCES))
 DEPS = $(wildcard $(IDIR)/*.h)
 
 $(BUILDDIR)/$(EXECUTABLE): $(OBJECTS)
-	$(CC) $^ -o $@
+	$(CC) $^ -o $@ $(LDFLAGS)
 
 $(OBJECTS): $(BUILDDIR)/%.o: $(SRCDIR)/%.c $(DEPS) $(MAKEFILE_LIST)
 	$(CC) -c $< -o $@ $(CFLAGS)
 
 .PHONY: run
 run: $(BUILDDIR)/$(EXECUTABLE)
-	$(RUN) -np 4 $(BUILDDIR)/$(EXECUTABLE)
+	$(RUN) -np 8 $(BUILDDIR)/$(EXECUTABLE)

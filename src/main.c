@@ -41,7 +41,7 @@
 
 int main(int argc, char const* argv[]) {
   int rank, size, *arr, *subarr;
-  size_t *n, local_n;
+  size_t n, local_n;
   // TODO: p potenza di 2?
   // MPI_Wtime
 
@@ -51,16 +51,17 @@ int main(int argc, char const* argv[]) {
 
   if (rank == 0) {
     char* filename = (argc > 1) ? argv[1] : FILENAME;
-    read_file(&arr, n, filename);
+    read_file(&arr, &n, filename);
   }
-  MPI_Bcast(n, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
+  MPI_Bcast(&n, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
 
-  
-  local_n = ceil(*n / size);
+  local_n = ceill((long double)n / size);
+
   if (rank != 0) {
     arr = malloc((1 << trailing_zeros(rank)) * local_n * sizeof(int));
   } else {
     debug_print_array(arr, n);
+    printf("\n");
   }
   // size must be power of 2
 
@@ -73,13 +74,10 @@ int main(int argc, char const* argv[]) {
   // sleep(rank);
   // debug_print_array(subarr, local_n);
   memcpy(arr, subarr, local_n * sizeof(int));
-  printf("\n");
 
   merge_sort(arr, local_n, rank, size, MPI_COMM_WORLD);
 
-  // printf("hello world\n");
   MPI_Finalize();
-  // printf("finito %d\n", rank);
 
   if (rank == 0) debug_print_array(arr, n);
   free(arr);

@@ -68,11 +68,10 @@ void _merge(int *arr1, int size1, int *arr2, int size2, int *tmp) {
   memcpy(arr1, tmp, (i + j) * sizeof(int));
 }
 
-void merge_sort(int *A, size_t local_n, int my_rank, int p, MPI_Comm comm, size_t a_size) {  // TODO: Cambiare i nomi degli argomenti
-  unsigned short int partner, done = 0;
-  size_t size = local_n;
-  unsigned bitmask = 1;
-  int *B, *C;
+void merge_sort(int *A, size_t local_n, int my_rank, int p, MPI_Comm comm) {  // TODO: Cambiare i nomi degli argomenti
+  int partner, bitmask = 1, *B, *C;
+  unsigned short done = 0;
+  size_t a_size, size = local_n;
   MPI_Status status;
 
   a_size = (1 << trailing_zeros(my_rank | p)) * local_n;
@@ -80,11 +79,11 @@ void merge_sort(int *A, size_t local_n, int my_rank, int p, MPI_Comm comm, size_
   B = malloc(a_size * 0.5 * sizeof(int));
   C = malloc(a_size * sizeof(int));
 
-  while (!done && bitmask < p) {
+  while (bitmask < p) {
     partner = my_rank ^ bitmask;
     if (my_rank > partner) {
       MPI_Send(A, size, MPI_INT, partner, 0, comm);
-      done = 1;
+      break;
     } else {
       MPI_Recv(B, size, MPI_INT, partner, 0, comm, &status);
       _merge(A, size, B, size, C);
