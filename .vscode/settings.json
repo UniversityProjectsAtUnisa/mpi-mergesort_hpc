@@ -30,7 +30,12 @@
     "thread": "c",
     "ratio": "c",
     "typeinfo": "c",
-    "utility": "c"
+    "utility": "c",
+    "chrono": "c",
+    "algorithm": "c",
+    "istream": "c",
+    "limits": "c",
+    "numeric": "c"
   },
   "python.formatting.provider": "autopep8",
   "python.formatting.autopep8Args": [

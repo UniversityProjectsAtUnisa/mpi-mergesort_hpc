@@ -56,42 +56,58 @@ void _merge(int *arr1, int size1, int *arr2, int size2, int *tmp) {
       j++;
     }
   }
-  while (i < size1) {
-    tmp[i + j] = arr1[i];
-    i++;
-  }
+  if (i < size1) memcpy(tmp + i + j, arr1 + i, (size1 - i) * sizeof(int));
+  if (j < size2) memcpy(tmp + size1 + j, arr2 + j, (size2 - j) * sizeof(int));
 
-  while (j < size2) {
-    tmp[i + j] = arr2[j];
-    j++;
-  }
-  memcpy(arr1, tmp, (i + j) * sizeof(int));
+  memcpy(arr1, tmp, (size1 + size2) * sizeof(int));
 }
 
-void merge_sort(int *A, size_t local_n, int my_rank, int p, MPI_Comm comm) {  // TODO: Cambiare i nomi degli argomenti
-  int partner, bitmask = 1, *B, *C;
+void merge_sort(int *arr, size_t n, size_t local_n, int rank, int size, MPI_Comm comm) {
+  int partner, bitmask = 1, *arr2, *tmp;
   unsigned short done = 0;
-  size_t a_size, size = local_n;
-  MPI_Status status;
+  size_t arr_size;
 
-  a_size = (1 << trailing_zeros(my_rank | p)) * local_n;
+  arr_size = (1 << trailing_zeros(rank | size)) * local_n;
 
-  B = malloc(a_size * 0.5 * sizeof(int));
-  C = malloc(a_size * sizeof(int));
+  // sort first local_n elements
+  tmp = malloc(arr_size * sizeof(int));
+  if (tmp == NULL) {
+    puts("Memory could not be allocated");
+    exit(EXIT_FAILURE);
+  }
 
-  while (bitmask < p) {
-    partner = my_rank ^ bitmask;
-    if (my_rank > partner) {
-      MPI_Send(A, size, MPI_INT, partner, 0, comm);
+  for (size_t curr_size = 1; curr_size <= local_n - 1; curr_size *= 2) {
+    for (size_t left_start = 0; left_start <= local_n - curr_size - 1;
+         left_start += 2 * curr_size) {
+      // int left_size = MIN(curr_size, local_n - left_start);
+      int right_size = MIN(curr_size, local_n - left_start - curr_size);
+
+      // if (left_size < curr_size) break;
+
+      _merge(arr + left_start, curr_size, arr + left_start + curr_size,
+             right_size, tmp);
+    }
+  }
+
+  arr2 = malloc(arr_size * 0.5 * sizeof(int));
+  if (arr2 == NULL) {
+    puts("Memory could not be allocated");
+    exit(EXIT_FAILURE);
+  }
+
+  while (bitmask < size) {
+    partner = rank ^ bitmask;
+    if (rank > partner) {
+      MPI_Send(arr, local_n, MPI_INT, partner, 0, comm);
       break;
     } else {
-      MPI_Recv(B, size, MPI_INT, partner, 0, comm, &status);
-      _merge(A, size, B, size, C);
-      size = 2 * size;
+      MPI_Recv(arr2, local_n, MPI_INT, partner, 0, comm, MPI_STATUS_IGNORE);
+      _merge(arr, local_n, arr2, local_n, tmp);
+      local_n *= 2;
       bitmask <<= 1;
     }
   }
 
-  free(B);
-  free(C);
+  free(arr2);
+  free(tmp);
 }

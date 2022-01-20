@@ -40,48 +40,73 @@
 #include "utils.h"
 
 int main(int argc, char const* argv[]) {
-  int rank, size, *arr, *subarr;
+  int rank, size, *arr;
   size_t n, local_n;
-  // TODO: p potenza di 2?
-  // MPI_Wtime
+  char* filename;
+  // TODO: MPI_Wtime
 
+  // Initialization
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-  if (rank == 0) {
-    char* filename = (argc > 1) ? argv[1] : FILENAME;
-    read_file(&arr, &n, filename);
+  // Check if size is valid
+  if (size != 0 && (size & size - 1)) {
+    puts("Proccess number must be greater than zero and a power of two");
+    exit(EXIT_FAILURE);
   }
-  MPI_Bcast(&n, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
 
+  // Reading array size as root process
+  if (rank == 0) {
+    filename = (argc > 1) ? argv[1] : FILENAME;
+    read_size_from_file(filename, &n);
+  }
+  // Broadcasting array size and calculate local array size
+  MPI_Bcast(&n, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
   local_n = ceill((long double)n / size);
 
-  if (rank != 0) {
-    arr = malloc((1 << trailing_zeros(rank)) * local_n * sizeof(int));
-  } else {
+  if (rank == 0) {
+    // Read array values as root process
+    arr = malloc(local_n * size * sizeof(int));
+    if (arr == NULL) {
+      puts("Memory could not be allocated");
+      exit(EXIT_FAILURE);
+    }
+    read_values_from_file(n, filename, arr);
+    // Add padding
+    for (size_t i = n; i < local_n * size; i++) {
+      arr[i] = __INT_MAX__;
+    }
     debug_print_array(arr, n);
-    printf("\n");
+    DEBUG_PUTS("");
+  } else {
+    // Allocate local arrays for other processes
+    arr = malloc((1 << trailing_zeros(rank)) * local_n * sizeof(int));
+    if (arr == NULL) {
+      puts("Memory could not be allocated");
+      exit(EXIT_FAILURE);
+    }
   }
-  // size must be power of 2
+  // Scatter workload
+  MPI_Scatter(arr, local_n, MPI_INT, arr, local_n, MPI_INT, 0, MPI_COMM_WORLD);
+  // qsort(arr, local_n, sizeof(int), compare);
 
-  subarr = malloc(local_n * sizeof(int));
-  MPI_Scatter(arr, local_n, MPI_INT, subarr, local_n, MPI_INT, 0,
-              MPI_COMM_WORLD);
-  qsort(subarr, local_n, sizeof(int), compare);
-  // TODO: Change
-
-  // sleep(rank);
-  // debug_print_array(subarr, local_n);
-  memcpy(arr, subarr, local_n * sizeof(int));
-
-  merge_sort(arr, local_n, rank, size, MPI_COMM_WORLD);
+  merge_sort(arr, n, local_n, rank, size, MPI_COMM_WORLD);
 
   MPI_Finalize();
 
   if (rank == 0) debug_print_array(arr, n);
+  if (rank == 0) {
+    for (size_t i = 0; i < n - 1; i++) {
+      if (arr[i] > arr[i + 1]) {
+        printf("FAIL");
+        return 0;
+      }
+    }
+    puts("SUCCESS");
+  }
   free(arr);
-  free(subarr);
+
   return EXIT_SUCCESS;
 }
 

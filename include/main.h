@@ -35,7 +35,7 @@
 #include <stdlib.h>
 
 
-#define DEBUG 1
+#define DEBUG 0
 #define DEBUG_PUTS \
   if (DEBUG) puts
 

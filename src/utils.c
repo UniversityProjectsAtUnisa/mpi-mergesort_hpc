@@ -34,13 +34,10 @@
 #include <stdlib.h>
 
 /**
- * @brief Allocates and populates an array with data in file FILENAME
- *
- * @param arr the array to be filled with the data from the file FILENAME
- * @param size the size of the array
  * @param filename the name of the input file
+ * @param size the size of the array
  */
-void read_file(int** arr, size_t* size, char* filename) {
+void read_size_from_file(char* filename, size_t* size) {
   FILE* fp;
   if ((fp = fopen(filename, "r")) == NULL) {
     puts("Input file not found");
@@ -48,14 +45,27 @@ void read_file(int** arr, size_t* size, char* filename) {
   }
 
   fscanf(fp, "%ld\n", size);
-  *arr = malloc(*size * sizeof(int));
-  if (*arr == NULL) {
-    puts("Memory could not be allocated");
+  fclose(fp);
+}
+
+/**
+ * @brief Allocates and populates an array with data in file FILENAME
+ *
+ * @param arr the array to be filled with the data from the file FILENAME
+ * @param size the size of the array
+ * @param filename the name of the input file
+ */
+void read_values_from_file(size_t size, char* filename, int* arr) {
+  FILE* fp;
+  if ((fp = fopen(filename, "r")) == NULL) {
+    puts("Input file not found");
     exit(EXIT_FAILURE);
   }
 
-  for (size_t i = 0; i < *size; i++) {
-    fscanf(fp, "%d", &(*arr)[i]);
+  fscanf(fp, "%*ld\n");
+
+  for (size_t i = 0; i < size; i++) {
+    fscanf(fp, "%d", arr + i);
   }
   fclose(fp);
 }
