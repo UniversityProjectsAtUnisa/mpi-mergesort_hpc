@@ -43,7 +43,7 @@ int main(int argc, char const* argv[]) {
   int rank, size, *arr;
   size_t n, local_n;
   char* filename;
-  // TODO: MPI_Wtime
+  double start, end;
 
   // Initialization
   MPI_Init(&argc, &argv);
@@ -61,6 +61,7 @@ int main(int argc, char const* argv[]) {
     filename = (argc > 1) ? argv[1] : FILENAME;
     read_size_from_file(filename, &n);
   }
+
   // Broadcasting array size and calculate local array size
   MPI_Bcast(&n, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
   local_n = ceill((long double)n / size);
@@ -91,7 +92,9 @@ int main(int argc, char const* argv[]) {
   MPI_Scatter(arr, local_n, MPI_INT, arr, local_n, MPI_INT, 0, MPI_COMM_WORLD);
   // qsort(arr, local_n, sizeof(int), compare);
 
+  start = MPI_Wtime();
   merge_sort(arr, n, local_n, rank, size, MPI_COMM_WORLD);
+  end = MPI_Wtime();
 
   MPI_Finalize();
 
@@ -99,14 +102,15 @@ int main(int argc, char const* argv[]) {
   if (rank == 0) {
     for (size_t i = 0; i < n - 1; i++) {
       if (arr[i] > arr[i + 1]) {
-        printf("FAIL");
+        DEBUG_PUTS("FAIL");
         return 0;
       }
     }
-    puts("SUCCESS");
+    DEBUG_PUTS("SUCCESS");
   }
   free(arr);
 
+  if (rank == 0) printf("%f", end - start);
   return EXIT_SUCCESS;
 }
 
