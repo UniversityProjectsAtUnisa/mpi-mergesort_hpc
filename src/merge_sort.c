@@ -30,6 +30,9 @@
 #include "merge_sort.h"
 
 #include <mpi.h>
+#include <stddef.h>
+
+#include "utils.h"
 
 /**
  * @brief Utility used by _merge_sort_aux to implement the merging part in the
@@ -65,29 +68,17 @@ void _merge(int *arr1, int size1, int *arr2, int size2, int *tmp) {
   memcpy(arr1, tmp, (i + j) * sizeof(int));
 }
 
-int trailing_zeross(int n, int p) {
-  int count = 0;
-
-  n |= p;  // FIXME: Non funzionava con zero
-  while (n > 0 && (n & 1) == 0) {
-    count++;
-    n >>= 1;
-  }
-
-  return count;
-}
-
-void merge_sort(int *A, int local_n, int my_rank, int p, MPI_Comm comm) {
-  int partner, done = 0, size = local_n;
+void merge_sort(int *A, size_t local_n, int my_rank, int p, MPI_Comm comm, size_t a_size) {  // TODO: Cambiare i nomi degli argomenti
+  unsigned short int partner, done = 0;
+  size_t size = local_n;
   unsigned bitmask = 1;
   int *B, *C;
   MPI_Status status;
 
-  int tz = 1 << trailing_zeross(my_rank, p) * local_n;
-  B = malloc(tz * 0.5 * sizeof(int));
-  C = malloc(tz * sizeof(int));
-  // B = malloc(p * local_n * sizeof(int));
-  // C = malloc(p * local_n * sizeof(int));
+  a_size = (1 << trailing_zeros(my_rank | p)) * local_n;
+
+  B = malloc(a_size * 0.5 * sizeof(int));
+  C = malloc(a_size * sizeof(int));
 
   while (!done && bitmask < p) {
     partner = my_rank ^ bitmask;
