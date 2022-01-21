@@ -32,11 +32,13 @@ flags.debug = -g -Wall
 flags.release = -w
 
 # parallel is default, for serial : make EXECUTION=serial
+EXECUTION = parallel
 O := 0
 FILENAME := input/in.txt
 N := 10000
 MAX := 2147483647
 MIN := -$(MAX)
+NUM_PROCESSES := 1
 
 # Wildcard to commands recipe
 space := #
@@ -49,8 +51,10 @@ BUILDDIR = build
 TESTDIR = test
 EXECUTABLE = main.out
 
+PIP_REQUIREMENTS = requirements.txt
 CC = mpicc
 RUN = mpirun
+MPI = --oversubscribe -np $(NUM_PROCESSES)
 CFLAGS = ${flags.${BUILD}} -I$(IDIR)
 LDFLAGS = -lm
 
@@ -86,12 +90,12 @@ clean:
 
 .PHONY: run
 run: $(BUILDDIR)/$(EXECUTABLE)
-	$(RUN) --oversubscribe -np 8 $(BUILDDIR)/$(EXECUTABLE)
+	$(RUN) $(MPI) $(BUILDDIR)/$(EXECUTABLE)
 
 # Run all tests
 .PHONY: test
 test: test_dir dir $(TEST_EXECUTABLES)
-	$(RUN) --oversubscribe -np 8 $(subst $(space),$(semicolon),$(TEST_EXECUTABLES)) 
+	$(RUN) $(MPI) $(subst $(space),$(semicolon),$(TEST_EXECUTABLES)) 
 
 $(TEST_EXECUTABLES): $(TESTDIR)/$(BUILDDIR)/%.out: $(TESTDIR)/$(BUILDDIR)/%.o $(BUILDDIR)/%.o $(BUILDDIR)/$(COMMON_OBJECTS)
 	$(CC) $^ -o $@ $(LDFLAGS)
@@ -106,4 +110,15 @@ generate_file: scripts/generate_file.py $(MAKEFILE_LIST)
        . venv/bin/activate; \
        pip install -r $(PIP_REQUIREMENTS); \
 		$(PYTHON) scripts/generate_file.py $(N) --min $(MIN) --max $(MAX) --input $(FILENAME); \
+    )
+
+.PHONY: measures
+measures: $(MAKEFILE_LIST)
+	python3 -m venv venv
+	( \
+       . venv/bin/activate; \
+       pip install -r $(PIP_REQUIREMENTS); \
+	$(PYTHON) scripts/generate_measures.py; \
+	$(PYTHON) scripts/generate_graphs.py; \
+	$(PYTHON) scripts/generate_tables.py; \
     )
