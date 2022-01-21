@@ -31,7 +31,7 @@
 #ifndef _HOME_MARCO741_MPI_CONTEST_MPI_INCLUDE_UTILS_H_
 #define _HOME_MARCO741_MPI_CONTEST_MPI_INCLUDE_UTILS_H_
 
-#include <stdlib.h>
+#include <stddef.h>
 
 #define MIN(a, b) (a < b ? a : b)
 

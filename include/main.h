@@ -32,7 +32,7 @@
 
 #define FILENAME "input/in.txt"
 
-#include <stdlib.h>
+#include <stddef.h>
 
 
 #define DEBUG 0
