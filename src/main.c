@@ -39,9 +39,9 @@
 #include "merge_sort.h"
 #include "utils.h"
 
-int main(int argc, char const* argv[]) {
+int main(int argc, char* argv[]) {
   int rank, size, *arr;
-  size_t n, local_n;
+  size_t n;
   char* filename;
   double start, end;
 
@@ -50,50 +50,37 @@ int main(int argc, char const* argv[]) {
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-  // Check if size is valid
-  if (size != 0 && (size & size - 1)) {
-    puts("Proccess number must be greater than zero and a power of two");
-    exit(EXIT_FAILURE);
-  }
-
-  // Reading array size as root process
   if (rank == 0) {
+    // Check if size is valid
+    if (size != 0 && (size & (size - 1))) {
+      puts("Proccess number must be greater than zero and a power of two");
+      exit(EXIT_FAILURE);
+    }
+
+    // Reading array size as root process
     filename = (argc > 1) ? argv[1] : FILENAME;
     read_size_from_file(filename, &n);
   }
 
   // Broadcasting array size and calculate local array size
   MPI_Bcast(&n, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
-  local_n = ceill((long double)n / size);
 
   if (rank == 0) {
     // Read array values as root process
-    arr = malloc(local_n * size * sizeof(int));
+    arr = malloc(n * sizeof(int));
     if (arr == NULL) {
       puts("Memory could not be allocated");
       exit(EXIT_FAILURE);
     }
     read_values_from_file(n, filename, arr);
-    // Add padding
-    for (size_t i = n; i < local_n * size; i++) {
-      arr[i] = __INT_MAX__;
-    }
     debug_print_array(arr, n);
     DEBUG_PUTS("");
-  } else {
-    // Allocate local arrays for other processes
-    arr = malloc((1 << trailing_zeros(rank)) * local_n * sizeof(int));
-    if (arr == NULL) {
-      puts("Memory could not be allocated");
-      exit(EXIT_FAILURE);
-    }
   }
-  // Scatter workload
-  MPI_Scatter(arr, local_n, MPI_INT, arr, local_n, MPI_INT, 0, MPI_COMM_WORLD);
+
   // qsort(arr, local_n, sizeof(int), compare);
 
   start = MPI_Wtime();
-  merge_sort(arr, n, local_n, rank, size, MPI_COMM_WORLD);
+  merge_sort(arr, n);
   end = MPI_Wtime();
 
   MPI_Finalize();
@@ -108,7 +95,7 @@ int main(int argc, char const* argv[]) {
     }
     DEBUG_PUTS("SUCCESS");
   }
-  free(arr);
+  if (rank == 0) free(arr);
 
   if (rank == 0) printf("%f", end - start);
   return EXIT_SUCCESS;

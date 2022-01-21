@@ -27,7 +27,7 @@
 # <http://www.gnu.org/licenses/>.
 
 # release is default, for debugging : make BUILD=debug
-BUILD := release
+BUILD := debug
 flags.debug = -g -Wall
 flags.release = -w
 
@@ -54,6 +54,8 @@ RUN = mpirun
 CFLAGS = ${flags.${BUILD}} -I$(IDIR)
 LDFLAGS = -lm
 
+COMMON = utils
+COMMON_OBJECTS = $(addsuffix .o, $(COMMON))
 TESTS = $(wildcard $(TESTDIR)/*.c)
 TEST_OBJECTS = $(patsubst $(TESTDIR)/%.c,$(TESTDIR)/$(BUILDDIR)/%.o,$(TESTS))
 TEST_EXECUTABLES = $(patsubst %.o,%.out,$(TEST_OBJECTS))
@@ -89,12 +91,12 @@ run: $(BUILDDIR)/$(EXECUTABLE)
 # Run all tests
 .PHONY: test
 test: test_dir dir $(TEST_EXECUTABLES)
-	$(RUN) $(subst $(space),$(semicolon),$(TEST_EXECUTABLES)) 
+	$(RUN) --oversubscribe -np 8 $(subst $(space),$(semicolon),$(TEST_EXECUTABLES)) 
 
-$(TEST_EXECUTABLES): $(TESTDIR)/$(BUILDDIR)/%.out: $(TESTDIR)/$(BUILDDIR)/%.o $(BUILDDIR)/%.o
+$(TEST_EXECUTABLES): $(TESTDIR)/$(BUILDDIR)/%.out: $(TESTDIR)/$(BUILDDIR)/%.o $(BUILDDIR)/%.o $(BUILDDIR)/$(COMMON_OBJECTS)
 	$(CC) $^ -o $@ $(LDFLAGS)
 
-$(TESTDIR)/$(BUILDDIR)/%.o: $(TESTDIR)/%.c $(MAKEFILE_LIST)
+$(TESTDIR)/$(BUILDDIR)/%.o: $(TESTDIR)/%.c $(DEPS) $(MAKEFILE_LIST)
 	$(CC) -c -O2 $< -o $@ $(CFLAGS)
 
 .PHONY: generate_file

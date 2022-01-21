@@ -31,19 +31,27 @@
 /**
  * @file merge_sort.c
  * @brief tests merge_sort behaviour
- * 
+ *
  * @copyright Copyright (c) 2021
- * 
+ *
  */
 
 #include "merge_sort.h"
 
 #include <assert.h>
+#include <mpi.h>
+#include <stdio.h>
 #include <stdlib.h>
+
+void mpi_assert(int expr) {
+  int rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  if (!rank) assert(expr);
+}
 
 /**
  * @brief verifies if the elements in an array are sorted in ascending order
- * 
+ *
  * @param arr the array to check
  * @param size the length of the array
  * @return int 0 if the array is not sorted, else 1
@@ -55,8 +63,9 @@ int _is_sorted(int *arr, int size) {
 }
 
 /**
- * @brief copies the value contained in an array stored in the stack to an array stored in the heap
- * 
+ * @brief copies the value contained in an array stored in the stack to an array
+ * stored in the heap
+ *
  * @param heap_array the array stored in the heap
  * @param stack_array the array stored in the stack
  * @param size the size of the stack array
@@ -72,8 +81,9 @@ int _equals_with_stackarr(int *heap_array, int *stack_array, int size) {
 }
 
 /**
- * @brief verifies if the given array is correctly sorted by the merge_sort and its resulting elements are equal to the given solution
- * 
+ * @brief verifies if the given array is correctly sorted by the merge_sort and
+ * its resulting elements are equal to the given solution
+ *
  * @param stack_arr the array to check
  * @param solution the expected result
  * @param size the size of the arrays
@@ -82,32 +92,14 @@ void _test_merge_sort(int *stack_arr, int *solution, int size) {
   int *arr = malloc(size * sizeof(int));
   _load_from_stackarr(arr, stack_arr, size);
 
-  merge_sort(arr, size);
-  assert(_equals_with_stackarr(arr, solution, size) == 1);
-  assert(_is_sorted(arr, size) == 1);
-}
-
-/**
- * @brief verifies if the given array is correctly sorted by the merge_sort_tasksize and its resulting elements are equal to the given solution
- * 
- * @param stack_arr the array to check
- * @param solution the expected result
- * @param size the size of the arrays
- * @param task_size the maximum dimension of the array that can be processed by a single thread
- */
-void _test_merge_sort_tasksize(int *stack_arr, int *solution, int size,
-                               int task_size) {
-  int *arr = malloc(size * sizeof(int));
-  _load_from_stackarr(arr, stack_arr, size);
-
-  merge_sort_tasksize(arr, size, task_size);
-  assert(_equals_with_stackarr(arr, solution, size) == 1);
-  assert(_is_sorted(arr, size) == 1);
+  merge_sort(arr, size);  
+  mpi_assert(_equals_with_stackarr(arr, solution, size) == 1);
+  mpi_assert(_is_sorted(arr, size) == 1);
 }
 
 /**
  * @brief tests merge_sort with an empty array
- * 
+ *
  */
 void test_empty_array() {
   int size = 0;
@@ -119,19 +111,19 @@ void test_empty_array() {
 
 /**
  * @brief tests merge_sort call with an array with one element
- * 
+ *
  */
 void test_one_element() {
   int size = 1;
   int stack_arr[1] = {1};
   int solution[1] = {1};
-
   _test_merge_sort(stack_arr, solution, size);
 }
 
 /**
- * @brief tests merge_sort call with an array whose elements are in reverse order
- * 
+ * @brief tests merge_sort call with an array whose elements are in reverse
+ * order
+ *
  */
 void test_descendent() {
   int size = 5;
@@ -142,8 +134,9 @@ void test_descendent() {
 }
 
 /**
- * @brief tests merge_sort call with an array whose elements are all different from each other
- * 
+ * @brief tests merge_sort call with an array whose elements are all different
+ * from each other
+ *
  */
 void test_full_different() {
   int size = 5;
@@ -154,8 +147,9 @@ void test_full_different() {
 }
 
 /**
- * @brief tests merge_sort call with an array whose elements are all equal from each other
- * 
+ * @brief tests merge_sort call with an array whose elements are all equal from
+ * each other
+ *
  */
 void test_full_equals() {
   int size = 5;
@@ -167,7 +161,7 @@ void test_full_equals() {
 
 /**
  * @brief tests merge_sort call with an array in which some elements are equal
- * 
+ *
  */
 void test_some_equals() {
   int size = 5;
@@ -179,7 +173,7 @@ void test_some_equals() {
 
 /**
  * @brief tests merge_sort call with an array whose elements are all positive
- * 
+ *
  */
 void test_full_positive() {
   int size = 5;
@@ -190,8 +184,8 @@ void test_full_positive() {
 }
 
 /**
- * @brief tests merge_sort with an array in which every element is negative 
- * 
+ * @brief tests merge_sort with an array in which every element is negative
+ *
  */
 void test_full_negative() {
   int size = 5;
@@ -203,7 +197,7 @@ void test_full_negative() {
 
 /**
  * @brief tests merge_sort with an array whose elements are already in order
- * 
+ *
  */
 void test_ordered() {
   int size = 5;
@@ -215,33 +209,30 @@ void test_ordered() {
 
 /**
  * @brief tests merge_sort giving the wrong size as argument
- * 
+ *
  */
 void test_fail_n() {
   int size = 5;
-  int stack_arr[5] = {-3, -2, 1, 5, 6};
+  int stack_arr[5] = {-2, -3, 1, 6, 5};
+  int solution[5] = {-3, -2, 1, 5, 6};
 
   int *arr = malloc(size * sizeof(int));
   _load_from_stackarr(arr, stack_arr, size);
 
-  merge_sort(arr, -2);
-  assert(_equals_with_stackarr(arr, stack_arr, size) == 1);
+  merge_sort(arr, 2);
+  mpi_assert(_equals_with_stackarr(arr, solution, size) == 0);
 }
 
-/**
- * @brief tests merge_sort_tasksize with an array whose elements are both negative and positive 
- * 
- */
-void test_explicit_tasksize() {
-  int size = 5;
-  int stack_arr[5] = {5, -1, 4, 2, -6};
-  int solution[5] = {-6, -1, 2, 4, 5};
-  int task_size = 200;
+int main(int argc, char *argv[]) {
+  int rank, size;
+  MPI_Init(&argc, &argv);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+  if (rank == 0 && size != 0 && (size & (size - 1))) {
+    puts("Proccess number must be greater than zero and a power of two");
+    exit(EXIT_FAILURE);
+  }
 
-  _test_merge_sort_tasksize(stack_arr, solution, size, task_size);
-}
-
-int main(int argc, char const *argv[]) {
   test_empty_array();
   test_one_element();
   test_descendent();
@@ -252,6 +243,6 @@ int main(int argc, char const *argv[]) {
   test_full_negative();
   test_ordered();
   test_fail_n();
-  test_explicit_tasksize();
+  MPI_Finalize();
   return 0;
 }

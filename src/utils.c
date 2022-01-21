@@ -62,7 +62,7 @@ void read_values_from_file(size_t size, char* filename, int* arr) {
     exit(EXIT_FAILURE);
   }
 
-  fscanf(fp, "%*ld\n");
+  fscanf(fp, "%*d\n");
 
   for (size_t i = 0; i < size; i++) {
     fscanf(fp, "%d", arr + i);
@@ -80,11 +80,4 @@ int trailing_zeros(int n) {
   }
 
   return count;
-}
-
-int compare(const void* a_p, const void* b_p) {
-  int a = *((int*)a_p);
-  int b = *((int*)b_p);
-
-  return (a > b) - (a < b);
 }
