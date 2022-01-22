@@ -62,6 +62,9 @@ def generate_file(N, min_value=None, max_value=2**31 - 1, filename="input/in.txt
         max_value (int, optional): Maximum number that can be generated. Defaults to 2**31-1.
         filename (str, optional): Name of the file to export to. Defaults to "input/in.txt".
     """
+    if N < 0:
+        return
+    min_value = min_value if min_value is not None else -max_value
 
     # Before generating creates the parent folder if doesn't already exist
     Path(filename).parent.mkdir(parents=True, exist_ok=True)

@@ -59,14 +59,14 @@ def plot_from_table(table, save=True, name=""):
 
     # First elements are zeroes to show axis intersection in the plot
     x, y = [0], [0]
-    thread_pos = table[0].index("processes")
+    process_pos = table[0].index("processes")
     speedup_pos = table[0].index("speedup")
 
     # The row 0 contains the header
     # The row 1 contains the serial execution
     # We are interested in the speedups for the parallel execution
     for row in table[2:]:
-        x.append(row[thread_pos])
+        x.append(row[process_pos])
         y.append(row[speedup_pos])
 
     _, ax = plt.subplots(figsize=(12, 8))

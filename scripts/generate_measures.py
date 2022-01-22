@@ -69,7 +69,6 @@ def single_measure(num_processes, O_level, execution):
     Args:
         num_processes (int): the number of processes
         O_level (int): the level of gcc optimization while compiling
-        task_size (int): the maximum dimension of the array that can be processed by a single thread
         execution (str): the type of execution. Valid values are serial, parallel
 
     Returns:
@@ -77,7 +76,7 @@ def single_measure(num_processes, O_level, execution):
     """
     return float(
         run_command(
-            f"make -s clean run O={O_level} EXECUTION={execution} NUM_PROCESSES={num_processes}")
+            f"make -s {execution} clean run O={O_level} NUM_PROCESSES={num_processes}")
         .stdout.decode()
     )
 
@@ -142,7 +141,8 @@ def write_table(header, rows, path):
 
 
 def main():
-    SIZES = [int(a) for a in [1e5, 4e5, 16e5]]
+    SIZES = [int(a) for a in [128e5]]
+    # SIZES = [int(a) for a in [1e5, 4e5, 16e5, 32e5, 64e5, 128e5]]
     NUMS_PROCESS = [1, 2, 4, 8, 16, 32]
     O_LEVELS = [0, 1, 2, 3]
     N_REPETITIONS = 10

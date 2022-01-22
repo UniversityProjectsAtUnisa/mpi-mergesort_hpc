@@ -76,10 +76,10 @@ $(BUILDDIR)/$(EXECUTABLE): $(OBJECTS) $(COMMON_OBJECTS)
 	$(CC) $^ -o $@ $(LDFLAGS)
 
 $(OBJECTS): $(BUILDDIR)/%.o: $(SRCDIR)/%.c $(DEPS) $(MAKEFILE_LIST) dir
-	$(CC) -c $< -o $@ $(CFLAGS)
+	$(CC) -c -O$(O) $< -o $@ $(CFLAGS)
 
 $(COMMON_OBJECTS): $(BUILDDIR)/%.o: $(COMMONDIR)/$(SRCDIR)/%.c $(DEPS) $(MAKEFILE_LIST) dir
-	$(CC) -c $< -o $@ $(CFLAGS)
+	$(CC) -c -O$(O) $< -o $@ $(CFLAGS)
 
 .PHONY: clean
 clean:
