@@ -32,7 +32,7 @@
 
 #include <math.h>
 #include <mpi.h>
-// #include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -76,8 +76,6 @@ int main(int argc, char* argv[]) {
     debug_print_array(arr, n);
     DEBUG_PUTS("");
   }
-
-  // qsort(arr, local_n, sizeof(int), compare);
 
   start = MPI_Wtime();
   merge_sort(arr, n);

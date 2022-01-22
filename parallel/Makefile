@@ -76,10 +76,10 @@ test_dir:
 $(BUILDDIR)/$(EXECUTABLE): $(OBJECTS) $(COMMON_OBJECTS)
 	$(CC) $^ -o $@ $(LDFLAGS)
 
-$(OBJECTS): $(BUILDDIR)/%.o: $(SRCDIR)/%.c $(DEPS) $(MAKEFILE_LIST)
+$(OBJECTS): $(BUILDDIR)/%.o: $(SRCDIR)/%.c $(DEPS) $(MAKEFILE_LIST) dir
 	$(CC) -c $< -o $@ $(CFLAGS)
 
-$(COMMON_OBJECTS): $(BUILDDIR)/%.o: $(COMMONDIR)/$(SRCDIR)/%.c $(DEPS) $(MAKEFILE_LIST)
+$(COMMON_OBJECTS): $(BUILDDIR)/%.o: $(COMMONDIR)/$(SRCDIR)/%.c $(DEPS) $(MAKEFILE_LIST) dir
 	$(CC) -c $< -o $@ $(CFLAGS)
 
 .PHONY: clean
@@ -92,11 +92,11 @@ run: $(BUILDDIR)/$(EXECUTABLE)
 
 # Run all tests
 .PHONY: test
-test: test_dir dir $(TEST_EXECUTABLES)
+test: $(TEST_EXECUTABLES)
 	$(RUN) $(MPI) $(subst $(space),$(semicolon),$(TEST_EXECUTABLES))
 
 $(TEST_EXECUTABLES): $(TESTDIR)/$(BUILDDIR)/%.out: $(TESTDIR)/$(BUILDDIR)/%.o $(BUILDDIR)/%.o $(COMMON_OBJECTS)
 	$(CC) $^ -o $@ $(LDFLAGS)
 
-$(TESTDIR)/$(BUILDDIR)/%.o: $(TESTDIR)/%.c $(DEPS) $(MAKEFILE_LIST)
+$(TESTDIR)/$(BUILDDIR)/%.o: $(TESTDIR)/%.c $(DEPS) $(MAKEFILE_LIST) dir test_dir
 	$(CC) -c -O2 $< -o $@ $(CFLAGS)

@@ -37,6 +37,6 @@
 
 int trailing_zeros(int n);
 void read_size_from_file(char* filename, size_t* size);
-void read_values_from_file(size_t size, char* filename, int*arr);
+void read_values_from_file(size_t size, char* filename, int* arr);
 
 #endif  // _HOME_MARCO741_MPI_CONTEST_MPI_INCLUDE_UTILS_H_

@@ -30,7 +30,7 @@
 #ifndef _HOME_MARCO741_MPI_CONTEST_MPI_INCLUDE_MAIN_H_
 #define _HOME_MARCO741_MPI_CONTEST_MPI_INCLUDE_MAIN_H_
 
-#define FILENAME "input/in.txt"
+#define FILENAME "in.txt"
 
 #include <stddef.h>
 

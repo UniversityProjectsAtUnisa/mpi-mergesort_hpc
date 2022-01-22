@@ -26,15 +26,22 @@
  * along with MPI Mergesort implementation.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _HOME_MARCO741_MPI_CONTEST_MPI_SERIAL_INCLUDE_MAIN_H_
+#define _HOME_MARCO741_MPI_CONTEST_MPI_SERIAL_INCLUDE_MAIN_H_
 
-#ifndef _HOME_MARCO741_MPI_CONTEST_MPI_INCLUDE_MERGE_SORT_H_
-#define _HOME_MARCO741_MPI_CONTEST_MPI_INCLUDE_MERGE_SORT_H_
+#define FILENAME "in.txt"
 
-#include <mpi.h>
 #include <stddef.h>
 
-void merge_sort(int *arr, size_t n);
-void _merge_sort_aux(int *arr, size_t n, size_t local_n, int rank, int size);
+
+#define DEBUG 0
+#define DEBUG_PUTS \
+  if (DEBUG) puts
+
+#define DEBUG_PRINT \
+  if (DEBUG) printf
 
 
-#endif // _HOME_MARCO741_MPI_CONTEST_MPI_INCLUDE_MERGE_SORT_H_
+void debug_print_array(int* arr, size_t size);
+
+#endif // _HOME_MARCO741_MPI_CONTEST_MPI_SERIAL_INCLUDE_MAIN_H_

@@ -26,15 +26,15 @@
  * along with MPI Mergesort implementation.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _HOME_MARCO741_MPI_CONTEST_MPI_COMMON_INCLUDE_SERIAL_MERGE_SORT_H_
+#define _HOME_MARCO741_MPI_CONTEST_MPI_COMMON_INCLUDE_SERIAL_MERGE_SORT_H_
 
-#ifndef _HOME_MARCO741_MPI_CONTEST_MPI_INCLUDE_MERGE_SORT_H_
-#define _HOME_MARCO741_MPI_CONTEST_MPI_INCLUDE_MERGE_SORT_H_
-
-#include <mpi.h>
 #include <stddef.h>
 
-void merge_sort(int *arr, size_t n);
-void _merge_sort_aux(int *arr, size_t n, size_t local_n, int rank, int size);
+#define _merge(arr1, size1, arr2, size2, tmp) _merge_maxsize(arr1, size1, arr2, size2, tmp, __SIZE_MAX__);
 
+void _merge_maxsize(int *arr1, size_t size1, int *arr2, size_t size2, int *tmp, size_t maxsize);
+void serial_merge_sort(int *arr, size_t n);
+void serial_merge_sort_tmp(int *arr, size_t n, int* tmp);
 
-#endif // _HOME_MARCO741_MPI_CONTEST_MPI_INCLUDE_MERGE_SORT_H_
+#endif // _HOME_MARCO741_MPI_CONTEST_MPI_COMMON_INCLUDE_SERIAL_MERGE_SORT_H_
