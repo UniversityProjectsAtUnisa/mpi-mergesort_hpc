@@ -28,80 +28,27 @@
 
 # release is default, for debugging : make BUILD=debug
 BUILD := debug
-flags.debug = -g -Wall
-flags.release = -w
 
-# parallel is default, for serial : make EXECUTION=serial
-EXECUTION = parallel
-O := 0
+NUM_PROCESSES := 2
 FILENAME := input/in.txt
+O := 0
 N := 10000
 MAX := 2147483647
 MIN := -$(MAX)
-NUM_PROCESSES := 1
-
-# Wildcard to commands recipe
-space := #
-space +=
-semicolon := ;
-
-IDIR = include
-SRCDIR = src
-BUILDDIR = build
-TESTDIR = test
-EXECUTABLE = main.out
-
 PIP_REQUIREMENTS = requirements.txt
-CC = mpicc
-RUN = mpirun
-MPI = --oversubscribe -np $(NUM_PROCESSES)
-CFLAGS = ${flags.${BUILD}} -I$(IDIR)
-LDFLAGS = -lm
 
-COMMON = utils
-COMMON_OBJECTS = $(addsuffix .o, $(COMMON))
-TESTS = $(wildcard $(TESTDIR)/*.c)
-TEST_OBJECTS = $(patsubst $(TESTDIR)/%.c,$(TESTDIR)/$(BUILDDIR)/%.o,$(TESTS))
-TEST_EXECUTABLES = $(patsubst %.o,%.out,$(TEST_OBJECTS))
-SOURCES = $(wildcard $(SRCDIR)/*.c)
-OBJECTS = $(patsubst $(SRCDIR)/%.c,$(BUILDDIR)/%.o,$(SOURCES))
-DEPS = $(wildcard $(IDIR)/*.h)
+TOPTARGETS := all dir test_dir clean run test 
 
-.PHONY: all
-all: dir $(BUILDDIR)/$(EXECUTABLE) $(TEST_EXECUTABLES)
+SUBDIRS := serial parallel
 
-.PHONY: dir
-dir:
-	mkdir -p $(BUILDDIR)
+.PHONY: $(TOPTARGETS)
+$(TOPTARGETS): $(SUBDIRS)
 
-.PHONY: test_dir
-test_dir:
-	mkdir -p $(TESTDIR)/$(BUILDDIR)
-
-$(BUILDDIR)/$(EXECUTABLE): $(OBJECTS)
-	$(CC) $^ -o $@ $(LDFLAGS)
-
-$(OBJECTS): $(BUILDDIR)/%.o: $(SRCDIR)/%.c $(DEPS) $(MAKEFILE_LIST)
-	$(CC) -c $< -o $@ $(CFLAGS)
-
-.PHONY: clean
-clean:
-	rm -f $(BUILDDIR)/*.o $(BUILDDIR)/$(EXECUTABLE) $(TESTDIR)/$(BUILDDIR)/*.o $(TESTDIR)/$(BUILDDIR)/*.out
-
-.PHONY: run
-run: $(BUILDDIR)/$(EXECUTABLE)
-	$(RUN) $(MPI) $(BUILDDIR)/$(EXECUTABLE)
-
-# Run all tests
-.PHONY: test
-test: test_dir dir $(TEST_EXECUTABLES)
-	$(RUN) $(MPI) $(subst $(space),$(semicolon),$(TEST_EXECUTABLES)) 
-
-$(TEST_EXECUTABLES): $(TESTDIR)/$(BUILDDIR)/%.out: $(TESTDIR)/$(BUILDDIR)/%.o $(BUILDDIR)/%.o $(BUILDDIR)/$(COMMON_OBJECTS)
-	$(CC) $^ -o $@ $(LDFLAGS)
-
-$(TESTDIR)/$(BUILDDIR)/%.o: $(TESTDIR)/%.c $(DEPS) $(MAKEFILE_LIST)
-	$(CC) -c -O2 $< -o $@ $(CFLAGS)
+.PHONY: $(SUBDIRS)
+$(SUBDIRS):
+	if [ "$(filter $(MAKECMDGOALS), $(SUBDIRS))" = "" ] || [ "$(filter $(MAKECMDGOALS), $@)" != "" ]; then \
+		$(MAKE) -C $@ $(filter-out $(SUBDIRS),$(MAKECMDGOALS)) BUILD=$(BUILD) FILENAME=$(addprefix ../, $(FILENAME)); \
+	fi
 
 .PHONY: generate_file
 generate_file: scripts/generate_file.py $(MAKEFILE_LIST)
