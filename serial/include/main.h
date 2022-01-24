@@ -26,6 +26,13 @@
  * along with MPI Mergesort implementation.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file main.h
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #ifndef _HOME_MARCO741_MPI_CONTEST_MPI_SERIAL_INCLUDE_MAIN_H_
 #define _HOME_MARCO741_MPI_CONTEST_MPI_SERIAL_INCLUDE_MAIN_H_
 
@@ -41,7 +48,12 @@
 #define DEBUG_PRINT \
   if (DEBUG) printf
 
-
+/**
+ * @brief Print for debug of the elements of an array
+ * 
+ * @param arr the array to be printed
+ * @param size the size of the array
+ */
 void debug_print_array(int* arr, size_t size);
 
 #endif // _HOME_MARCO741_MPI_CONTEST_MPI_SERIAL_INCLUDE_MAIN_H_

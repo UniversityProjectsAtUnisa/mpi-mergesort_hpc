@@ -28,6 +28,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file serial_merge_sort.c
+ * @brief tests serial_merge_sort behaviour
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+
 #include "serial_merge_sort.h"
 
 #include <assert.h>
@@ -35,7 +43,7 @@
 #include <stdlib.h>
 
 /**
- * @brief verifies if the elements in an array are sorted in ascending order
+ * @brief Verifies if the elements in an array are sorted in ascending order
  *
  * @param arr the array to check
  * @param size the length of the array
@@ -48,7 +56,7 @@ int _is_sorted(int *arr, int size) {
 }
 
 /**
- * @brief copies the value contained in an array stored in the stack to an array
+ * @brief Copies the value contained in an array stored in the stack to an array
  * stored in the heap
  *
  * @param heap_array the array stored in the heap
@@ -59,6 +67,14 @@ void _load_from_stackarr(int *heap_array, int *stack_array, int size) {
   for (size_t i = 0; i < size; i++) heap_array[i] = stack_array[i];
 }
 
+/**
+ * @brief Verifies if the elements in heap_array and stack_array are equal
+ * 
+ * @param heap_array the array stored in the heap
+ * @param stack_array the array stored in the stack
+ * @param size the size of the stack array
+ * @return int one if they are equal, zero otherwise
+ */
 int _equals_with_stackarr(int *heap_array, int *stack_array, int size) {
   for (size_t i = 0; i < size; i++)
     if (heap_array[i] != stack_array[i]) return 0;
@@ -66,7 +82,7 @@ int _equals_with_stackarr(int *heap_array, int *stack_array, int size) {
 }
 
 /**
- * @brief verifies if the given array is correctly sorted by the merge_sort and
+ * @brief Verifies if the given array is correctly sorted by the merge_sort and
  * its resulting elements are equal to the given solution
  *
  * @param stack_arr the array to check
@@ -83,7 +99,7 @@ void _test_merge_sort(int *stack_arr, int *solution, int size) {
 }
 
 /**
- * @brief tests merge_sort with an empty array
+ * @brief Tests merge_sort with an empty array
  *
  */
 void test_empty_array() {
@@ -95,7 +111,7 @@ void test_empty_array() {
 }
 
 /**
- * @brief tests merge_sort call with an array with one element
+ * @brief Tests merge_sort call with an array with one element
  *
  */
 void test_one_element() {
@@ -106,7 +122,7 @@ void test_one_element() {
 }
 
 /**
- * @brief tests merge_sort call with an array whose elements are in reverse
+ * @brief Tests merge_sort call with an array whose elements are in reverse
  * order
  *
  */
@@ -119,7 +135,7 @@ void test_descendent() {
 }
 
 /**
- * @brief tests merge_sort call with an array whose elements are all different
+ * @brief Tests merge_sort call with an array whose elements are all different
  * from each other
  *
  */
@@ -132,7 +148,7 @@ void test_full_different() {
 }
 
 /**
- * @brief tests merge_sort call with an array whose elements are all equal from
+ * @brief Tests merge_sort call with an array whose elements are all equal from
  * each other
  *
  */
@@ -145,7 +161,7 @@ void test_full_equals() {
 }
 
 /**
- * @brief tests merge_sort call with an array in which some elements are equal
+ * @brief Tests merge_sort call with an array in which some elements are equal
  *
  */
 void test_some_equals() {
@@ -157,7 +173,7 @@ void test_some_equals() {
 }
 
 /**
- * @brief tests merge_sort call with an array whose elements are all positive
+ * @brief Tests merge_sort call with an array whose elements are all positive
  *
  */
 void test_full_positive() {
@@ -169,7 +185,7 @@ void test_full_positive() {
 }
 
 /**
- * @brief tests merge_sort with an array in which every element is negative
+ * @brief Tests merge_sort with an array in which every element is negative
  *
  */
 void test_full_negative() {
@@ -181,7 +197,7 @@ void test_full_negative() {
 }
 
 /**
- * @brief tests merge_sort with an array whose elements are already in order
+ * @brief Tests merge_sort with an array whose elements are already in order
  *
  */
 void test_ordered() {
@@ -193,7 +209,7 @@ void test_ordered() {
 }
 
 /**
- * @brief tests merge_sort giving the wrong size as argument
+ * @brief Tests merge_sort giving the wrong size as argument
  *
  */
 void test_fail_n() {
