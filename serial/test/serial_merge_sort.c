@@ -30,7 +30,7 @@
 
 /**
  * @file serial_merge_sort.c
- * @brief tests serial_merge_sort behaviour
+ * @brief Tests serial_merge_sort behaviour
  *
  * @copyright Copyright (c) 2022
  *

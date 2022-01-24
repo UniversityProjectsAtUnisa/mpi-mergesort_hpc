@@ -30,6 +30,7 @@
 
 /**
  * @file serial_merge_sort.c
+ * @brief Implements a serial non-recursive version of the merge sort algorithm
  * 
  * @copyright Copyright (c) 2022
  * 

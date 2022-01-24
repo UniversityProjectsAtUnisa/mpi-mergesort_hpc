@@ -30,7 +30,7 @@
 
 /**
  * @file merge_sort.c
- * @brief tests merge_sort behaviour
+ * @brief Tests merge_sort behaviour
  *
  * @copyright Copyright (c) 2022
  *

@@ -30,7 +30,7 @@
 
 /**
  * @file main.c
- * @brief measures the execution time of a serial implementation of the merge_sort algorithm
+ * @brief Measures the execution time of a serial implementation of the merge_sort algorithm
  * 
  * @copyright Copyright (c) 2022
  * 

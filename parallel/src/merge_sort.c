@@ -27,6 +27,15 @@
  * along with MPI Mergesort implementation.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * @file merge_sort.c
+ * @brief Implements a parallel version of the merge sort algorithm
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include "merge_sort.h"
 
 #include <math.h>

@@ -30,6 +30,7 @@
 
 /**
  * @file utils.c
+ * @brief Contains utilities to read from file and to count trailing zeros of a number
  * 
  * @copyright Copyright (c) 2022
  * 
