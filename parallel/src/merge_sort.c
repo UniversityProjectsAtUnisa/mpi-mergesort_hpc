@@ -38,6 +38,14 @@
 #include "serial_merge_sort.h"
 #include "utils.h"
 
+
+/**
+ * @brief Merge sorts an array of size n with parallel programming;
+ * MPI_Init must have been called before this function was called
+ * 
+ * @param arr the array to be sorted
+ * @param n the size of the array
+ */
 void merge_sort(int *arr, size_t n) {
   if (n == 0) return;
   int rank, size, *padarr;
@@ -81,6 +89,16 @@ void merge_sort(int *arr, size_t n) {
   if (rank == 0) free(padarr);
 }
 
+
+/**
+ * @brief Utility used by merge_sort to implement the merge sort
+ * 
+ * @param arr the array to be sorted
+ * @param n the size of the array
+ * @param local_n the size of the array allocated by the single process
+ * @param rank the rank of the process calling the utility
+ * @param size the number of processes instantiated with mpi
+ */
 void _merge_sort_aux(int *arr, size_t n, size_t local_n, int rank, int size) {
   int partner, bitmask = 1, *arr2, *tmp;
   size_t arr_size;

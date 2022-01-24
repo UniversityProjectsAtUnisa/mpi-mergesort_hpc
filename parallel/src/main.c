@@ -39,6 +39,14 @@
 #include "merge_sort.h"
 #include "utils.h"
 
+
+/**
+ * @brief Calls and measures the execution time of merge_sort function
+ * 
+ * @param argc number of arguments
+ * @param argv arguments. Accepts filename as first argument, defaults to "in.txt"
+ * @return int status code
+ */
 int main(int argc, char* argv[]) {
   int rank, size, *arr;
   size_t n;

@@ -26,6 +26,12 @@
  * along with MPI Mergesort implementation.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file merge_sort.h
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 
 #ifndef _HOME_MARCO741_MPI_CONTEST_MPI_INCLUDE_MERGE_SORT_H_
 #define _HOME_MARCO741_MPI_CONTEST_MPI_INCLUDE_MERGE_SORT_H_
@@ -33,7 +39,24 @@
 #include <mpi.h>
 #include <stddef.h>
 
+/**
+ * @brief Merge sorts an array of size n with parallel programming;
+ * MPI_Init must have been called before this function was called
+ * 
+ * @param arr the array to be sorted
+ * @param n the size of the array
+ */
 void merge_sort(int *arr, size_t n);
+
+/**
+ * @brief Utility used by merge_sort to implement the merge sort
+ * 
+ * @param arr the array to be sorted
+ * @param n the size of the array
+ * @param local_n the size of the array allocated by the single process
+ * @param rank the rank of the process calling the utility
+ * @param size the number of processes instantiated with mpi
+ */
 void _merge_sort_aux(int *arr, size_t n, size_t local_n, int rank, int size);
 
 
