@@ -28,6 +28,13 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file serial_merge_sort.c
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include "serial_merge_sort.h"
 
 #include <stdio.h>
@@ -36,15 +43,16 @@
 
 #include "utils.h"
 
+
 /**
- * @brief Utility used by _merge_sort_aux to implement the merging part in the
- * merge sort
- *
+ * @brief Utility to implement the merging part in the merge sort algorithm
+ * 
  * @param arr1 the first array to be merged
  * @param size1 the size of the first array
  * @param arr2 the second array to be merged
  * @param size2 the size of the second array
- * @param tmp the temporary array to implement the algorithm
+ * @param tmp the temporary array to implement the algorithm 
+ * @param maxsize the maximum number of elements to copy in the final sorted array
  */
 void _merge_maxsize(int* arr1, size_t size1, int* arr2, size_t size2, int* tmp,
                     size_t maxsize) {
@@ -65,6 +73,13 @@ void _merge_maxsize(int* arr1, size_t size1, int* arr2, size_t size2, int* tmp,
   memcpy(arr1, tmp, MIN((size1 + size2), maxsize) * sizeof(int));
 }
 
+
+/**
+ * @brief Merge sorts an array of size n without parallel programming
+ * 
+ * @param arr the array to be sorted
+ * @param n the size of the array
+ */
 void serial_merge_sort(int* arr, size_t n) {
   if (n == 0) return;
   int* tmp;
@@ -78,6 +93,14 @@ void serial_merge_sort(int* arr, size_t n) {
   serial_merge_sort_tmp(arr, n, tmp);
 }
 
+
+/**
+ * @brief Merge sorts an array of size n without parallel programming, using an already allocated temporary array
+ * 
+ * @param arr the array to be sorted
+ * @param n the size of the array
+ * @param tmp the support array used in the implementation
+ */
 void serial_merge_sort_tmp(int* arr, size_t n, int* tmp) {
   if (n == 0) return;
   

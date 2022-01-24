@@ -28,14 +28,43 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file utils.c
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include "utils.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
 /**
+ * @brief Counts the traling zeros in the binary representation of an integer; 
+ * returns -1 if the input is 0
+ * 
+ * @param n the input integer
+ * @return int the number of traling zeros, -1 if the input is 0
+ */
+int trailing_zeros(int n) {
+  int count = 0;
+
+  if (n == 0) return -1;
+  while (n > 0 && (n & 1) == 0) {
+    count++;
+    n >>= 1;
+  }
+
+  return count;
+}
+
+
+/**
+ * @brief Reads the size of an array in file "filename"
+ * 
  * @param filename the name of the input file
- * @param size the size of the array
+ * @param size the size to be filled with the value read from the file
  */
 void read_size_from_file(char* filename, size_t* size) {
   FILE* fp;
@@ -48,12 +77,13 @@ void read_size_from_file(char* filename, size_t* size) {
   fclose(fp);
 }
 
+
 /**
- * @brief Allocates and populates an array with data in file FILENAME
- *
- * @param arr the array to be filled with the data from the file FILENAME
- * @param size the size of the array
+ * @brief Reads the values of an array in file "filename"
+ * 
+ * @param size the size of the array, so the number of values to read from file
  * @param filename the name of the input file
+ * @param arr the array to be filled with the data from the file
  */
 void read_values_from_file(size_t size, char* filename, int* arr) {
   FILE* fp;
@@ -68,16 +98,4 @@ void read_values_from_file(size_t size, char* filename, int* arr) {
     fscanf(fp, "%d", arr + i);
   }
   fclose(fp);
-}
-
-int trailing_zeros(int n) {
-  int count = 0;
-
-  if (n == 0) return -1;
-  while (n > 0 && (n & 1) == 0) {
-    count++;
-    n >>= 1;
-  }
-
-  return count;
 }
