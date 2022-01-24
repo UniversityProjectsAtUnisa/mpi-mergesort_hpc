@@ -141,8 +141,7 @@ def write_table(header, rows, path):
 
 
 def main():
-    SIZES = [int(a) for a in [128e5]]
-    # SIZES = [int(a) for a in [1e5, 4e5, 16e5, 32e5, 64e5, 128e5]]
+    SIZES = [int(a) for a in [1e5, 4e5, 16e5, 32e5, 64e5, 128e5]]
     NUMS_PROCESS = [1, 2, 4, 8, 16, 32]
     O_LEVELS = [0, 1, 2, 3]
     N_REPETITIONS = 10
